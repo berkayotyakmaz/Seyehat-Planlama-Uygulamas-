@@ -1,0 +1,385 @@
+[
+  {
+    "seyahat_id": 1,
+    "gidis_yeri": "Kapadokya",
+    "tarih": "07.04.2026",
+    "donus_tarihi": "09.04.2026",
+    "kullanici_id": 1,
+    "konaklama": {
+      "otel_adi": "Cave Hotel",
+      "fiyat": 1500.0,
+      "adres": "Göreme Merkez",
+      "oda_tipi": "Çift Kişilik"
+    },
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "07.04.2026",
+        "rota": [
+          "Göreme",
+          "Uçhisar"
+        ],
+        "aktiviteler": [
+          "Balon turu",
+          "Kahvaltı",
+          "Peri bacaları gezisi"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "08.04.2026",
+        "rota": [
+          "Göreme Açıkhava Müzesi",
+          "Avanos"
+        ],
+        "aktiviteler": [
+          "Müze gezisi",
+          "Çömlek atölyesi",
+          "Akşam yemeği"
+        ]
+      },
+      {
+        "gun": 3,
+        "tarih": "09.04.2026",
+        "rota": [
+          "Derinkuyu",
+          "Ihlara Vadisi"
+        ],
+        "aktiviteler": [
+          "Yeraltı şehri turu",
+          "Vadi yürüyüşü"
+        ]
+      }
+    ],
+    "notlar": "Harika bir deneyimdi! Balon turu unutulmaz."
+  },
+  {
+    "seyahat_id": 2,
+    "gidis_yeri": "Antalya",
+    "tarih": "23.04.2026",
+    "donus_tarihi": "27.04.2026",
+    "kullanici_id": 1,
+    "konaklama": {
+      "otel_adi": "Sea View Resort",
+      "fiyat": 2200.0,
+      "adres": "Konyaaltı Sahili",
+      "oda_tipi": "Suite"
+    },
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "23.04.2026",
+        "rota": [
+          "Düden Şelalesi",
+          "Kaleiçi"
+        ],
+        "aktiviteler": [
+          "Şelale gezisi",
+          "Tarihi sokaklar yürüyüşü"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "24.04.2026",
+        "rota": [
+          "Aspendos",
+          "Side"
+        ],
+        "aktiviteler": [
+          "Antik tiyatro gezisi",
+          "Side harabeleri"
+        ]
+      },
+      {
+        "gun": 3,
+        "tarih": "25.04.2026",
+        "rota": [
+          "Konyaaltı Plajı"
+        ],
+        "aktiviteler": [
+          "Plaj günü",
+          "Yüzme",
+          "Güneşlenme"
+        ]
+      },
+      {
+        "gun": 4,
+        "tarih": "26.04.2026",
+        "rota": [
+          "Olimpos",
+          "Yanartaş"
+        ],
+        "aktiviteler": [
+          "Olimpos harabeleri",
+          "Yanartaş gece gezisi"
+        ]
+      },
+      {
+        "gun": 5,
+        "tarih": "27.04.2026",
+        "rota": [
+          "Antalya Müzesi"
+        ],
+        "aktiviteler": [
+          "Müze gezisi",
+          "Hediyelik alışveriş",
+          "Dönüş hazırlığı"
+        ]
+      }
+    ],
+    "notlar": "Deniz harikaydı, Aspendos çok etkileyici."
+  },
+  {
+    "seyahat_id": 3,
+    "gidis_yeri": "İstanbul",
+    "tarih": "07.05.2026",
+    "donus_tarihi": "10.05.2026",
+    "kullanici_id": 1,
+    "konaklama": {
+      "otel_adi": "Bosphorus Hotel",
+      "fiyat": 3000.0,
+      "adres": "Beşiktaş, Boğaz kenarı",
+      "oda_tipi": "Suite"
+    },
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "07.05.2026",
+        "rota": [
+          "Konferans Merkezi",
+          "Taksim"
+        ],
+        "aktiviteler": [
+          "Konferans katılımı",
+          "Akşam yemeği"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "08.05.2026",
+        "rota": [
+          "Sultanahmet",
+          "Ayasofya",
+          "Topkapı Sarayı"
+        ],
+        "aktiviteler": [
+          "Tarihi alan gezisi",
+          "Öğle yemeği"
+        ]
+      },
+      {
+        "gun": 3,
+        "tarih": "09.05.2026",
+        "rota": [
+          "Galata Kulesi",
+          "Karaköy",
+          "Balat"
+        ],
+        "aktiviteler": [
+          "Fotoğraf turu",
+          "Kahve molası"
+        ]
+      },
+      {
+        "gun": 4,
+        "tarih": "10.05.2026",
+        "rota": [
+          "Kapalıçarşı",
+          "Mısır Çarşısı"
+        ],
+        "aktiviteler": [
+          "Alışveriş",
+          "Dönüş"
+        ]
+      }
+    ],
+    "notlar": "İş gezisi ama biraz gezi de yapmalı."
+  },
+  {
+    "seyahat_id": 4,
+    "gidis_yeri": "Bodrum",
+    "tarih": "21.05.2026",
+    "donus_tarihi": "27.05.2026",
+    "kullanici_id": 1,
+    "konaklama": {
+      "otel_adi": "Beach Resort",
+      "fiyat": 1800.0,
+      "adres": "Bodrum Merkez",
+      "oda_tipi": "Çift Kişilik"
+    },
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "21.05.2026",
+        "rota": [
+          "Bodrum Kalesi"
+        ],
+        "aktiviteler": [
+          "Varış ve yerleşme",
+          "Kale gezisi"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "22.05.2026",
+        "rota": [
+          "Bodrum Antik Tiyatro",
+          "Marina"
+        ],
+        "aktiviteler": [
+          "Antik tiyatro gezisi",
+          "Marina yürüyüşü"
+        ]
+      },
+      {
+        "gun": 3,
+        "tarih": "23.05.2026",
+        "rota": [
+          "Bitez Plajı"
+        ],
+        "aktiviteler": [
+          "Yat turu",
+          "Plaj"
+        ]
+      },
+      {
+        "gun": 4,
+        "tarih": "24.05.2026",
+        "rota": [
+          "Gümüşlük"
+        ],
+        "aktiviteler": [
+          "Gümüşlük gezisi",
+          "Balık yemeği"
+        ]
+      },
+      {
+        "gun": 5,
+        "tarih": "25.05.2026",
+        "rota": [
+          "Türkbükü"
+        ],
+        "aktiviteler": [
+          "Plaj günü"
+        ]
+      },
+      {
+        "gun": 6,
+        "tarih": "26.05.2026",
+        "rota": [
+          "Bodrum Sualtı Müzesi"
+        ],
+        "aktiviteler": [
+          "Müze gezisi",
+          "Alışveriş"
+        ]
+      },
+      {
+        "gun": 7,
+        "tarih": "27.05.2026",
+        "rota": [],
+        "aktiviteler": [
+          "Dönüş hazırlığı"
+        ]
+      }
+    ],
+    "notlar": ""
+  },
+  {
+    "seyahat_id": 5,
+    "gidis_yeri": "Trabzon",
+    "tarih": "06.06.2026",
+    "donus_tarihi": "09.06.2026",
+    "kullanici_id": 1,
+    "konaklama": {
+      "otel_adi": "Karadeniz Otel",
+      "fiyat": 1200.0,
+      "adres": "Trabzon Merkez",
+      "oda_tipi": "Tek Kişilik"
+    },
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "06.06.2026",
+        "rota": [
+          "Uzungöl"
+        ],
+        "aktiviteler": [
+          "Uzungöl gezisi",
+          "Doğa yürüyüşü"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "07.06.2026",
+        "rota": [
+          "Sümela Manastırı"
+        ],
+        "aktiviteler": [
+          "Manastır gezisi",
+          "Fotoğraf"
+        ]
+      },
+      {
+        "gun": 3,
+        "tarih": "08.06.2026",
+        "rota": [
+          "Ayder Yaylası"
+        ],
+        "aktiviteler": [
+          "Yayla gezisi",
+          "Termal banyo"
+        ]
+      },
+      {
+        "gun": 4,
+        "tarih": "09.06.2026",
+        "rota": [
+          "Trabzon Merkez",
+          "Atatürk Köşkü"
+        ],
+        "aktiviteler": [
+          "Şehir turu",
+          "Dönüş"
+        ]
+      }
+    ],
+    "notlar": ""
+  },
+  {
+    "seyahat_id": 6,
+    "gidis_yeri": "Eskişehir",
+    "tarih": "28.05.2026",
+    "donus_tarihi": "29.05.2026",
+    "kullanici_id": 1,
+    "konaklama": null,
+    "planlar": [
+      {
+        "gun": 1,
+        "tarih": "28.05.2026",
+        "rota": [
+          "Odunpazarı",
+          "Porsuk Çayı"
+        ],
+        "aktiviteler": [
+          "Tarihi evler gezisi",
+          "Gondol turu"
+        ]
+      },
+      {
+        "gun": 2,
+        "tarih": "29.05.2026",
+        "rota": [
+          "Sazova Parkı",
+          "Bilim Deney Merkezi"
+        ],
+        "aktiviteler": [
+          "Park gezisi",
+          "Bilim merkezi",
+          "Dönüş"
+        ]
+      }
+    ],
+    "notlar": ""
+  }
+]
