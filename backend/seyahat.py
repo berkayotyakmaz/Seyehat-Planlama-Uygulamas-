@@ -38,24 +38,31 @@ class Seyahat:
             return self.konaklama.toplam_fiyat(self.gun_sayisi())
         return 0.0
 
+    @staticmethod
+    def _bugun() -> datetime:
+        """Saat 00:00:00'a normalize edilmiş 'bugün'."""
+        return datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
     def aktif_mi(self) -> bool:
-        bugun = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        bugun = self._bugun()
         return self.tarih <= bugun <= self.donus_tarihi
 
     def gelecek_mi(self) -> bool:
-        bugun = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        return self.tarih > bugun
+        return self.tarih > self._bugun()
 
     def gecmis_mi(self) -> bool:
-        bugun = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-        return self.donus_tarihi < bugun
+        return self.donus_tarihi < self._bugun()
 
     def kalan_gun(self) -> int | None:
         """Gelecek seyahat ise kaç gün kaldığını döner."""
-        if not self.gelecek_mi():
+        bugun = self._bugun()
+        if self.tarih <= bugun:
             return None
-        bugun = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         return (self.tarih - bugun).days
+
+    def duzenlenebilir_mi(self) -> bool:
+        """Geçmiş seyahatler düzenlenemez kuralının tek kaynağı."""
+        return not self.gecmis_mi()
 
     def durum_metni(self) -> str:
         if self.gecmis_mi():
@@ -81,6 +88,19 @@ class Seyahat:
                     Plan(gun=i, tarih=self.tarih + timedelta(days=i - 1))
                 )
         self.planlar = yeni_planlar
+
+    def kaybolacak_dolu_planlar(self, yeni_gun_sayisi: int) -> list[int]:
+        """
+        Gün sayısı azaltıldığında veri kaybı olacak gün numaralarını döner.
+        Sadece içeriği (rota veya aktivite) DOLU olan günler sayılır.
+        """
+        if yeni_gun_sayisi >= self.gun_sayisi():
+            return []
+        kayip = []
+        for p in self.planlar:
+            if p.gun > yeni_gun_sayisi and (p.rota or p.aktiviteler):
+                kayip.append(p.gun)
+        return kayip
 
     def to_dict(self) -> dict:
         return {

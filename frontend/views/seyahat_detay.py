@@ -30,11 +30,16 @@ class SeyahatDetaySayfasi(QWidget):
     geri_istendi = pyqtSignal()
     veri_degisti = pyqtSignal()
 
-    def __init__(self, vy: VeriYoneticisi, parent=None):
+    def __init__(self, vy: VeriYoneticisi, aktif_kullanici=None, parent=None):
         super().__init__(parent)
         self.vy = vy
+        self.aktif_kullanici = aktif_kullanici
         self.seyahat = None
         self._arayuz_olustur()
+
+    @property
+    def _kid(self):
+        return self.aktif_kullanici.kullanici_id if self.aktif_kullanici else None
 
     def _arayuz_olustur(self):
         dis = QVBoxLayout(self)
@@ -53,7 +58,17 @@ class SeyahatDetaySayfasi(QWidget):
         dis.addWidget(self.scroll)
 
     def seyahat_yukle(self, seyahat_id: int):
-        self.seyahat = self.vy.seyahat_getir(seyahat_id)
+        s = self.vy.seyahat_getir(seyahat_id)
+        # Sahiplik koruması.
+        if s and self._kid is not None and s.kullanici_id != self._kid:
+            QMessageBox.warning(
+                self, "Yetki Yok",
+                "Bu seyahate erişim izniniz yok.",
+            )
+            self.seyahat = None
+            self._temizle()
+            return
+        self.seyahat = s
         self._icerigi_olustur()
 
     def yenile(self):
@@ -245,6 +260,23 @@ class SeyahatDetaySayfasi(QWidget):
         dlg = SeyahatDiyalog(seyahat=self.seyahat, parent=self)
         if dlg.exec_() == SeyahatDiyalog.Accepted:
             r = dlg.sonuc
+
+            # Gün sayısı azaltılıyorsa ve dolu planlar kaybolacaksa onay al.
+            yeni_gun = (r["donus_tarihi"] - r["tarih"]).days + 1
+            kayip = self.seyahat.kaybolacak_dolu_planlar(yeni_gun)
+            if kayip:
+                liste = ", ".join(f"Gün {g}" for g in kayip)
+                cevap = QMessageBox.warning(
+                    self, "Plan Verisi Silinecek",
+                    f"Seyahat süresi {self.seyahat.gun_sayisi()} günden "
+                    f"{yeni_gun} güne düşürülüyor.\n\n"
+                    f"Şu günlerin rotası ve aktiviteleri SİLİNECEK:\n{liste}\n\n"
+                    f"Devam etmek istiyor musunuz?",
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
+                )
+                if cevap != QMessageBox.Yes:
+                    return
+
             try:
                 self.vy.seyahat_guncelle(
                     seyahat_id=self.seyahat.seyahat_id,
@@ -272,11 +304,14 @@ class SeyahatDetaySayfasi(QWidget):
 
         dlg = PlanDuzenleDiyalog(plan, parent=self)
         if dlg.exec_() == PlanDuzenleDiyalog.Accepted:
-            self.vy.plan_guncelle(
-                self.seyahat.seyahat_id,
-                gun,
-                dlg.sonuc_rota,
-                dlg.sonuc_aktiviteler,
-            )
-            self.veri_degisti.emit()
-            self.yenile()
+            try:
+                self.vy.plan_guncelle(
+                    self.seyahat.seyahat_id,
+                    gun,
+                    dlg.sonuc_rota,
+                    dlg.sonuc_aktiviteler,
+                )
+                self.veri_degisti.emit()
+                self.yenile()
+            except ValueError as ex:
+                QMessageBox.warning(self, "Hata", str(ex))

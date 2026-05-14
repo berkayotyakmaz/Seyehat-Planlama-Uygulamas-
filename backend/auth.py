@@ -23,6 +23,7 @@ class AuthKullanici:
         ad: str = "",
         rol: str = "yonetici",
         olusturma: str = None,
+        kullanici_id: int = 1,
     ):
         self.kullanici_adi = kullanici_adi.strip().lower()
         self.sifre_hash = sifre_hash
@@ -30,6 +31,7 @@ class AuthKullanici:
         self.ad = ad or kullanici_adi
         self.rol = rol
         self.olusturma = olusturma or datetime.now().isoformat()
+        self.kullanici_id = kullanici_id
 
     def to_dict(self) -> dict:
         return {
@@ -39,6 +41,7 @@ class AuthKullanici:
             "ad": self.ad,
             "rol": self.rol,
             "olusturma": self.olusturma,
+            "kullanici_id": self.kullanici_id,
         }
 
     @classmethod
@@ -98,6 +101,12 @@ class AuthYoneticisi:
         if kullanici_adi in self._kullanicilar:
             raise ValueError(f"Bu kullanıcı adı zaten kayıtlı: {kullanici_adi}")
 
+        # Otomatik kullanıcı ID üret.
+        if self._kullanicilar:
+            yeni_id = max(k.kullanici_id for k in self._kullanicilar.values()) + 1
+        else:
+            yeni_id = 1
+
         salt = self._yeni_salt()
         sifre_hash = self._hash_sifre(sifre, salt)
         k = AuthKullanici(
@@ -106,6 +115,7 @@ class AuthYoneticisi:
             salt=salt,
             ad=ad.strip() or kullanici_adi,
             rol=rol,
+            kullanici_id=yeni_id,
         )
         self._kullanicilar[kullanici_adi] = k
         self.kaydet()

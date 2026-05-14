@@ -29,13 +29,19 @@ class SeyahatlerSayfasi(QWidget):
     seyahat_secildi = pyqtSignal(int)
     veri_degisti = pyqtSignal()
 
-    def __init__(self, vy: VeriYoneticisi, parent=None):
+    def __init__(self, vy: VeriYoneticisi, aktif_kullanici=None, parent=None):
         super().__init__(parent)
         self.vy = vy
+        self.aktif_kullanici = aktif_kullanici
         self._filtre = "tumu"
         self._arama = ""
         self._arayuz_olustur()
         self.yenile()
+
+    @property
+    def _kid(self):
+        """Aktif kullanıcının ID'si (None ise tüm veri görünür)."""
+        return self.aktif_kullanici.kullanici_id if self.aktif_kullanici else None
 
     def _arayuz_olustur(self):
         dis = QVBoxLayout(self)
@@ -127,7 +133,7 @@ class SeyahatlerSayfasi(QWidget):
                     if sub.widget():
                         sub.widget().deleteLater()
 
-        tum = self.vy.tum_seyahatler()
+        tum = self.vy.tum_seyahatler(self._kid)
         if self._filtre == "aktif":
             tum = [s for s in tum if s.aktif_mi()]
         elif self._filtre == "yaklasan":
@@ -285,6 +291,7 @@ class SeyahatlerSayfasi(QWidget):
                 gidis_yeri=r["gidis_yeri"],
                 tarih=r["tarih"],
                 donus_tarihi=r["donus_tarihi"],
+                kullanici_id=self._kid or 1,
                 konaklama=r["konaklama"],
                 notlar=r["notlar"],
             )
@@ -298,6 +305,23 @@ class SeyahatlerSayfasi(QWidget):
         dlg = SeyahatDiyalog(seyahat=s, parent=self)
         if dlg.exec_() == SeyahatDiyalog.Accepted:
             r = dlg.sonuc
+
+            # #3: Gün sayısı azaltılıyorsa ve dolu planlar kaybolacaksa onay al.
+            yeni_gun = (r["donus_tarihi"] - r["tarih"]).days + 1
+            kayip = s.kaybolacak_dolu_planlar(yeni_gun)
+            if kayip:
+                liste = ", ".join(f"Gün {g}" for g in kayip)
+                cevap = QMessageBox.warning(
+                    self, "Plan Verisi Silinecek",
+                    f"Seyahat süresi {s.gun_sayisi()} günden {yeni_gun} güne "
+                    f"düşürülüyor.\n\n"
+                    f"Şu günlerin rotası ve aktiviteleri SİLİNECEK:\n{liste}\n\n"
+                    f"Devam etmek istiyor musunuz?",
+                    QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
+                )
+                if cevap != QMessageBox.Yes:
+                    return
+
             try:
                 self.vy.seyahat_guncelle(
                     seyahat_id=seyahat_id,
@@ -315,6 +339,13 @@ class SeyahatlerSayfasi(QWidget):
     def _sil(self, seyahat_id: int):
         s = self.vy.seyahat_getir(seyahat_id)
         if not s:
+            return
+        # Sahiplik koruması: yalnızca kendi seyahatini silebilir.
+        if self._kid is not None and s.kullanici_id != self._kid:
+            QMessageBox.warning(
+                self, "Yetki Yok",
+                "Bu seyahat başka bir kullanıcıya ait.",
+            )
             return
         cevap = QMessageBox.question(
             self, "Seyahat Sil",

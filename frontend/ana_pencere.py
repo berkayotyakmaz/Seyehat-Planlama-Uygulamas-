@@ -29,6 +29,7 @@ class AnaPencere(QMainWindow):
         super().__init__()
         self.vy = vy
         self.aktif_kullanici = aktif_kullanici
+        self.logout_istendi = False
 
         self.setWindowTitle("Yol Defteri — Seyahat Planlama")
         self.setMinimumSize(1180, 760)
@@ -54,9 +55,9 @@ class AnaPencere(QMainWindow):
         self.yigin = QStackedWidget()
 
         self.sayfa_dashboard = DashboardSayfasi(self.vy, self.aktif_kullanici)
-        self.sayfa_seyahatler = SeyahatlerSayfasi(self.vy)
-        self.sayfa_detay = SeyahatDetaySayfasi(self.vy)
-        self.sayfa_raporlar = RaporlarSayfasi(self.vy)
+        self.sayfa_seyahatler = SeyahatlerSayfasi(self.vy, self.aktif_kullanici)
+        self.sayfa_detay = SeyahatDetaySayfasi(self.vy, self.aktif_kullanici)
+        self.sayfa_raporlar = RaporlarSayfasi(self.vy, self.aktif_kullanici)
 
         self.sayfa_seyahatler.seyahat_secildi.connect(self._seyahat_detay_goster)
         self.sayfa_seyahatler.veri_degisti.connect(self._tumunu_yenile)
@@ -193,7 +194,9 @@ class AnaPencere(QMainWindow):
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No,
         )
         if cevap == QMessageBox.Yes:
-            QApplication.quit()
+            # main.py'daki loop bunu görüp login ekranını yeniden açacak.
+            self.logout_istendi = True
+            self.close()
 
     def _sayfa_degistir(self, indeks: int):
         self.yigin.setCurrentIndex(indeks)

@@ -27,11 +27,16 @@ from frontend.widgets.bilesenler import (
 
 
 class RaporlarSayfasi(QWidget):
-    def __init__(self, vy: VeriYoneticisi, parent=None):
+    def __init__(self, vy: VeriYoneticisi, aktif_kullanici=None, parent=None):
         super().__init__(parent)
         self.vy = vy
+        self.aktif_kullanici = aktif_kullanici
         self._arayuz_olustur()
         self.yenile()
+
+    @property
+    def _kid(self):
+        return self.aktif_kullanici.kullanici_id if self.aktif_kullanici else None
 
     def _arayuz_olustur(self):
         dis = QVBoxLayout(self)
@@ -75,7 +80,7 @@ class RaporlarSayfasi(QWidget):
 
         self.m_toplam = MetrikKart("Toplam Seyahat", "0")
         self.m_sure = MetrikKart("Ort. Süre", "0", "gün", accent=True)
-        self.m_harcama = MetrikKart("Toplam Harcama", "0")
+        self.m_harcama = MetrikKart("Gerçekleşen Harcama", "0")
         self.m_sehir = MetrikKart("Farklı Şehir", "0")
 
         metrik_row.addWidget(self.m_toplam)
@@ -119,21 +124,24 @@ class RaporlarSayfasi(QWidget):
         return lbl
 
     def yenile(self):
-        ist = self.vy.genel_istatistikler()
+        ist = self.vy.genel_istatistikler(self._kid)
         self.m_toplam.deger_ayarla(str(ist["toplam_seyahat"]))
 
-        ort = self.vy.ortalama_sure()
+        ort = self.vy.ortalama_sure(self._kid)
         self.m_sure.deger_ayarla(f"{ort:.1f}")
         self.m_sure.altyazi_ayarla("gün ortalama")
 
-        harcama = ist["toplam_harcama"]
+        harcama = ist["gerceklesen_harcama"]
         if harcama >= 1000:
             self.m_harcama.deger_ayarla(f"{harcama/1000:.1f}K")
         else:
             self.m_harcama.deger_ayarla(str(int(harcama)))
-        self.m_harcama.altyazi_ayarla(f"{int(harcama):,} TL".replace(",", "."))
+        planli = ist["planlanan_butce"]
+        self.m_harcama.altyazi_ayarla(
+            f"{int(harcama):,} TL  (+{int(planli):,} TL planlı)".replace(",", ".")
+        )
 
-        dagilim = self.vy.sehir_dagilimi()
+        dagilim = self.vy.sehir_dagilimi(self._kid)
         self.m_sehir.deger_ayarla(str(len(dagilim)))
 
         self.sehir_bar.dagilim = dagilim
@@ -147,7 +155,7 @@ class RaporlarSayfasi(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-        gecmis = self.vy.gecmis_seyahatler()
+        gecmis = self.vy.gecmis_seyahatler(self._kid)
         if not gecmis:
             bos = QLabel("Henüz tamamlanmış seyahat yok.")
             bos.setStyleSheet(
@@ -210,12 +218,12 @@ class RaporlarSayfasi(QWidget):
         if not dosya:
             return
 
-        tum = self.vy.tum_seyahatler()
+        tum = self.vy.tum_seyahatler(self._kid)
         with open(dosya, "w", newline="", encoding="utf-8-sig") as f:
             writer = csv.writer(f)
             writer.writerow([
                 "ID", "Gidiş Yeri", "Gidiş Tarihi", "Dönüş Tarihi",
-                "Gün Sayısı", "Otel", "Gecelik Fiyat", "Toplam Bütçe",
+                "Gün Sayısı", "Otel", "Gecelik Fiyat", "Konaklama Bütçesi",
                 "Durum", "Notlar",
             ])
             for s in tum:

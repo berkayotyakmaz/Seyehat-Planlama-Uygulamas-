@@ -50,21 +50,13 @@ def main():
     )
     os.makedirs(veri_klasoru, exist_ok=True)
 
-    # Auth
+    # Auth (tek sefer)
     auth = AuthYoneticisi(os.path.join(veri_klasoru, "kullanicilar.json"))
     if not auth.kullanici_var_mi():
         auth.varsayilan_kullanici_olustur()
         print("[Auth] Varsayılan kullanıcı oluşturuldu (admin / admin123)")
 
-    # Login
-    login = LoginPenceresi(auth)
-    if login.exec_() != QDialog.Accepted:
-        sys.exit(0)
-
-    aktif_kullanici = login.dogrulanan_kullanici
-    print(f"[Auth] Giriş başarılı: {aktif_kullanici.ad}")
-
-    # Veri yöneticisi
+    # Veri yöneticisi (tek sefer)
     vy = VeriYoneticisi(veri_klasoru=veri_klasoru)
 
     if seed_gerekli_mi(vy):
@@ -72,10 +64,25 @@ def main():
         seed_uygula(vy)
         print(f"[Seed] {len(vy.tum_seyahatler())} seyahat eklendi.")
 
-    pencere = AnaPencere(vy, aktif_kullanici=aktif_kullanici)
-    pencere.show()
+    # Login → AnaPencere → Logout → Login (loop)
+    while True:
+        login = LoginPenceresi(auth)
+        if login.exec_() != QDialog.Accepted:
+            # Login penceresi iptal/çarpı → uygulamadan çık.
+            sys.exit(0)
 
-    sys.exit(app.exec_())
+        aktif_kullanici = login.dogrulanan_kullanici
+        print(f"[Auth] Giriş başarılı: {aktif_kullanici.ad}")
+
+        pencere = AnaPencere(vy, aktif_kullanici=aktif_kullanici)
+        pencere.show()
+        app.exec_()
+
+        # AnaPencere kapandı. Logout istendi mi yoksa uygulamadan çıkış mı?
+        if not getattr(pencere, "logout_istendi", False):
+            sys.exit(0)
+        # Logout → loop başına dön, login ekranı tekrar açılır.
+        print("[Auth] Oturum kapatıldı.")
 
 
 if __name__ == "__main__":

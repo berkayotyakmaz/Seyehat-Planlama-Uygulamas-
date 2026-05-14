@@ -31,6 +31,10 @@ class DashboardSayfasi(QWidget):
         self._arayuz_olustur()
         self.yenile()
 
+    @property
+    def _kid(self):
+        return self.aktif_kullanici.kullanici_id if self.aktif_kullanici else None
+
     def _arayuz_olustur(self):
         dis = QVBoxLayout(self)
         dis.setContentsMargins(0, 0, 0, 0)
@@ -63,7 +67,9 @@ class DashboardSayfasi(QWidget):
         self.m_toplam = MetrikKart("Toplam Seyahat", "0", "Tüm seyahatler")
         self.m_aktif = MetrikKart("Aktif Seyahat", "0", "Şu an devam eden", accent=True)
         self.m_yaklasan = MetrikKart("Yaklaşan", "0", "Gelecek seyahatler")
-        self.m_harcama = MetrikKart("Toplam Harcama", "0", "Konaklama toplamı")
+        self.m_harcama = MetrikKart(
+            "Gerçekleşen Harcama", "0", "Geçmiş + aktif konaklama"
+        )
 
         metrik_row.addWidget(self.m_toplam)
         metrik_row.addWidget(self.m_aktif)
@@ -96,12 +102,13 @@ class DashboardSayfasi(QWidget):
         return lbl
 
     def yenile(self):
-        ist = self.vy.genel_istatistikler()
+        ist = self.vy.genel_istatistikler(self._kid)
         self.m_toplam.deger_ayarla(str(ist["toplam_seyahat"]))
         self.m_aktif.deger_ayarla(str(ist["aktif_seyahat"]))
         self.m_yaklasan.deger_ayarla(str(ist["yaklasan_seyahat"]))
 
-        harcama = ist["toplam_harcama"]
+        # #4: "Toplam Harcama" yerine GERÇEKLEŞEN harcama göster.
+        harcama = ist["gerceklesen_harcama"]
         if harcama >= 1000:
             harcama_str = f"{harcama/1000:.1f}K"
         else:
@@ -122,8 +129,8 @@ class DashboardSayfasi(QWidget):
             if item.widget():
                 item.widget().deleteLater()
 
-        gelecek = self.vy.gelecek_seyahatler()
-        aktif = self.vy.aktif_seyahatler()
+        gelecek = self.vy.gelecek_seyahatler(self._kid)
+        aktif = self.vy.aktif_seyahatler(self._kid)
         liste = aktif + gelecek
 
         if not liste:
